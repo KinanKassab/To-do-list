@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#c084fc" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Mom's Day" />
+  <title>Mom's Daily Tasks ✨</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="app-title">Mom's Day <span class="title-icon">🌸</span></h1>
+        <p class="date-label" id="dateLabel"></p>
+      </div>
+      <div class="header-right">
+        <button class="btn-icon" id="settingsBtn" title="Settings">⚙️</button>
+      </div>
+    </div>
+
+    <!-- Progress Section -->
+    <div class="progress-card">
+      <div class="progress-top">
+        <span class="progress-label">Today's Progress</span>
+        <span class="points-display"><span id="currentPoints">0</span> / <span id="goalPoints">100</span> pts</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="progress-bottom">
+        <span class="progress-pct" id="progressPct">0%</span>
+        <span class="bonus-badge hidden" id="bonusBadge">🎉 Bonus Earned!</span>
+      </div>
+    </div>
+
+    <!-- Bonus Banner -->
+    <div class="bonus-banner hidden" id="bonusBanner">
+      <span>🌟</span>
+      <span id="bonusText">You earned a bonus today! Keep it up!</span>
+      <button class="banner-close" id="closeBanner">✕</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- Carried Bonus -->
+    <div class="carried-bonus hidden" id="carriedBonus">
+      <div class="bonus-card">
+        <div class="bonus-icon">🎁</div>
+        <div class="bonus-info">
+          <p class="bonus-title">Yesterday's Bonus!</p>
+          <p class="bonus-desc" id="carriedBonusText"></p>
+        </div>
+        <button class="btn-dismiss" id="dismissBonus">✓ Got it!</button>
+      </div>
+    </div>
+
+    <!-- Task List -->
+    <section class="tasks-section">
+      <div class="section-header">
+        <h2 class="section-title">Tasks</h2>
+        <button class="btn-add" id="addTaskBtn">+ Add Task</button>
+      </div>
+
+      <div class="task-list" id="taskList">
+        <!-- tasks rendered here -->
+      </div>
+
+      <div class="empty-state hidden" id="emptyState">
+        <div class="empty-icon">📋</div>
+        <p class="empty-text">No tasks yet!</p>
+        <p class="empty-sub">Tap "Add Task" to get started</p>
+      </div>
+    </section>
+
+    <!-- Completed -->
+    <section class="tasks-section" id="completedSection" style="margin-top:8px">
+      <div class="section-header collapsible" id="completedToggle">
+        <h2 class="section-title completed-title">Completed <span class="count-chip" id="completedCount">0</span></h2>
+        <span class="chevron" id="completedChevron">▼</span>
+      </div>
+      <div class="task-list" id="completedList"></div>
+    </section>
+
+  </main>
+
+  <!-- Add / Edit Task Modal -->
+  <div class="modal-overlay hidden" id="taskModal">
+    <div class="modal">
+      <h2 class="modal-title" id="modalTitle">New Task</h2>
+
+      <label class="field-label">Task Name</label>
+      <input class="field-input" id="taskName" type="text" placeholder="e.g. Morning walk" maxlength="80" />
+
+      <label class="field-label">Points <span class="field-hint">(how many pts this is worth)</span></label>
+      <div class="points-picker">
+        <button class="pts-btn" data-pts="5">5</button>
+        <button class="pts-btn" data-pts="10">10</button>
+        <button class="pts-btn" data-pts="15">15</button>
+        <button class="pts-btn" data-pts="20">20</button>
+        <button class="pts-btn" data-pts="25">25</button>
+        <button class="pts-btn" data-pts="30">30</button>
+        <button class="pts-btn" data-pts="50">50</button>
+      </div>
+      <div class="custom-pts-wrap">
+        <span class="custom-pts-label">Custom:</span>
+        <input class="field-input custom-pts-input" id="customPts" type="number" min="1" max="999" placeholder="pts" />
+      </div>
+
+      <label class="field-label">Category</label>
+      <div class="category-picker" id="categoryPicker">
+        <button class="cat-btn active" data-cat="general">📌 General</button>
+        <button class="cat-btn" data-cat="health">💪 Health</button>
+        <button class="cat-btn" data-cat="home">🏠 Home</button>
+        <button class="cat-btn" data-cat="family">👨‍👩‍👧 Family</button>
+        <button class="cat-btn" data-cat="personal">🌺 Personal</button>
+      </div>
+
+      <label class="field-label">Emoji (optional)</label>
+      <div class="emoji-picker">
+        <button class="emoji-btn active" data-emoji="✅">✅</button>
+        <button class="emoji-btn" data-emoji="🌟">🌟</button>
+        <button class="emoji-btn" data-emoji="💪">💪</button>
+        <button class="emoji-btn" data-emoji="🏃">🏃</button>
+        <button class="emoji-btn" data-emoji="🍳">🍳</button>
+        <button class="emoji-btn" data-emoji="📚">📚</button>
+        <button class="emoji-btn" data-emoji="🧘">🧘</button>
+        <button class="emoji-btn" data-emoji="🛒">🛒</button>
+        <button class="emoji-btn" data-emoji="🌿">🌿</button>
+        <button class="emoji-btn" data-emoji="💊">💊</button>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancelTask">Cancel</button>
+        <button class="btn-save" id="saveTask">Save Task</button>
+      </div>
+
+      <button class="btn-delete-task hidden" id="deleteTask">🗑 Delete Task</button>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay hidden" id="settingsModal">
+    <div class="modal">
+      <h2 class="modal-title">Settings ⚙️</h2>
+
+      <label class="field-label">Daily Point Goal</label>
+      <input class="field-input" id="goalInput" type="number" min="10" max="9999" placeholder="e.g. 100" />
+      <p class="field-hint" style="margin-bottom:16px">Reach this to earn the daily bonus!</p>
+
+      <label class="field-label">Bonus Message</label>
+      <input class="field-input" id="bonusMessageInput" type="text" placeholder="e.g. Treat yourself to something nice!" maxlength="120" />
+      <p class="field-hint" style="margin-bottom:16px">Shown when the goal is reached.</p>
+
+      <label class="field-label">Mom's Name</label>
+      <input class="field-input" id="momNameInput" type="text" placeholder="e.g. Mama" maxlength="30" />
+
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancelSettings">Cancel</button>
+        <button class="btn-save" id="saveSettings">Save</button>
+      </div>
+
+      <div class="danger-zone">
+        <button class="btn-reset" id="resetDayBtn">🔄 Reset Today's Tasks</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;display:none;"></canvas>
+
+  <script src="app.js"></script>
+</body>
+</html>
